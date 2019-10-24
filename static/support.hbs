@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<div class="input" style="display: flex; justify-content: space-around">
+<div>
+<input type="text" id="text">
+<button id='btn'>SEND</button>
+</div>
+    <br>
+<button id='joinRoom'>joinRoom</button>
+
+<br>
+<div >
+<input type="text" id="textToRoom">
+<button id='btnToRoom'>SEND TO ROOM</button>
+</div>
+
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+
+    const btn = document.getElementById('btn');
+    const text = document.getElementById('text');
+
+    const btnToRoom = document.getElementById('btnToRoom');
+    const textToRoom = document.getElementById('textToRoom');
+    const joinRoom = document.getElementById('joinRoom');
+
+
+
+    btnToRoom.onclick = () =>{
+        socket.emit('msg',textToRoom.value)
+    };
+
+    joinRoom.onclick = ()=>{
+        socket.emit('joinRoom',{room_id:'222'})
+    };
+
+    socket.on('msg_resp',(data)=>{
+        const divka = document.createElement('div');
+        divka.style.border = `2px solid brown`;
+        divka.style.padding = `5px` ;
+
+        divka.innerText = `Message: ${data}`;
+        document.body.appendChild(divka);
+
+    });
+    btn.onclick = () => {
+        socket.emit('message',text.value);
+        text.value = "";
+
+    };
+
+    socket.on('respMessage',resp =>{
+
+        const divka = document.createElement('div');
+        divka.style.border = `1px solid yellow`;
+        divka.style.padding = `5px` ;
+
+        divka.innerText = `User: ${resp.id} \n Message: ${resp.data}`;
+        // divka.innerText = `User: ${resp.id} \n Message: ${resp.data}`;
+        document.body.appendChild(divka);
+
+        // console.log(resp.id);
+        // console.log(resp.data);
+    });
+
+    socket.on('user_disc', data=>{
+
+        const divka = document.createElement('div');
+
+        divka.style.border = `1px solid red` ;
+        divka.style.padding = `5px` ;
+
+        divka.innerText = `User: ${data.id} is disconnect`;
+        document.body.appendChild(divka);
+    })
+</script>
+</body>
+</html>
