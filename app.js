@@ -31,7 +31,6 @@ io.on('connection', socket =>{
     socket.on('msg',data =>{
         console.log(data);
         io.to(data.room_id).emit('msg_resp', {id: socket.id, data: data.data});
-        // io.to('222').emit('msg_resp',data)
     });
 
     socket.on('joinRoom',data =>{
